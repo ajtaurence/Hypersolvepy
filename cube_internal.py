@@ -60,11 +60,6 @@ class Stickercube:
         '''
         Repositions the internal state of the cube so that the piece in all negative axes is considered solved
         '''
-        
-        # This function is where the bug is
-        # This only works about 1/3 of the time
-        # I don't even know how this works as is
-
 
         #get the index of the piece in all negative axes to be the reference piece
         index = np.nonzero(np.all(np.sign(self.position) == -1, axis=1))[0][0]
@@ -75,28 +70,16 @@ class Stickercube:
         axis_map = np.empty_like(reference_piece)
         axis_map[np.abs(reference_piece)- 1] = np.arange(4)
 
-        #resticker the cube by the reference piece (replace sticker i on the reference sticker with the correct order)
+        #resticker the cube by the reference piece (replace axes with the correct order from reference sticker)
         new_position = np.sign(self.position)
         for i in range(16):
             for j in range(4):
                 new_position[i, j] *= axis_map[np.abs(self.position[i, j]) - 1] + 1
 
-        #resticker the solved position
-        new_solved = np.empty_like(Stickercube.solved)
-        new_solved[:, np.abs(reference_piece) - 1] = Stickercube.solved
-
-        '''
-        #find the permutation going from the old solved position to the new solved position
-        permutation = np.empty(16, dtype=np.uint8)
-        for i, piece in enumerate(np.sign(Stickercube.solved)):
-            permutation[i] = [np.all(np.sign(new_solved)[j,:]==piece) for j in range(16)].index(True)
-        
-        '''
-
 
         #calculate the new positions that should be considered solved
-        new_index = np.nonzero(np.all(np.sign(new_position) == -1, axis=1))[0][0]
-        new_solved_position = np.multiply(Stickercube.solved, -np.sign(Stickercube.solved[new_index]))
+        new_solved_position = np.empty_like(Stickercube.solved)
+        new_solved_position[:, axis_map] = (np.multiply(Stickercube.solved, -np.sign(Stickercube.solved[index])))
         
         #find the permutation going from the old solved position to the new solved position
         permutation = np.empty(16, dtype=np.uint8)
