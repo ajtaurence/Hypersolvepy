@@ -1,5 +1,5 @@
 # About
-Hypersolvepy is an efficient 3-phase 2^4 Rubik's cube solver made in python. It takes an MC4D log file containing a scrambled 2^4 and returns another log file containing the solution. It produces iteratively shorter solutions, the more time it is given. Solutions to random state scrambles are typically around 27 moves (STM) after only a few seconds of searching. For short scrambles (less than about 5 moves), an optimal solution can be found and verified within a reasonable amount of time.
+Hypersolvepy is an efficient 3-phase 2^4 Rubik's cube solver written in python. This is a proof of concept version. A [more optimized version](https://github.com/ajtaurence/Hypersolve) is currently being written in Rust. It takes an MC4D log file containing a scrambled 2^4 and returns another log file containing the solution. It produces iteratively shorter solutions, the more time it is given. Solutions to random state scrambles are typically around 27 moves (STM) after only a few seconds of searching. For short scrambles (less than about 5 moves), an optimal solution can be found and verified within a reasonable amount of time.
 
 # Setup
 1. Install Python 3.9 (newer versions should work but v3.9 is known to work).
