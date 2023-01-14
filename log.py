@@ -50,7 +50,7 @@ class Log:
         return repr(self.scramble + self.solution)
 
     def __str__(self) -> str:
-        string = "MagicCube4D 3 0 0 {4,3,3} 2\n0.731762581557179 -0.19593642894153976 0.6527882045858442 0.0\n0.6813606608159284 0.18716613400295473 -0.7076132334650542 0.0\n0.016467365461856454 0.9625890889138652 0.27046454809959974 0.0\n0.0 0.0 0.0 1.0\n*\n"
+        string = "MagicCube4D 3 0 0 {4,3,3} 2\n1 0 0 0\n0 1 0 0\n0 0 1 0\n0 0 0 1\n*\n"
 
         #convert the twist objects to a string
         string += " ".join([twist.to_mc4d_string() for twist in self.scramble])
