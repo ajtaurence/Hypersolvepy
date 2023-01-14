@@ -201,6 +201,10 @@ class Twist:
 
         #3 corresponds to both layers (cube rotation)
         elif layer == 3:
+                #make cube rotations happen from positive side so when we search for them we can just choose the positive one
+                if side == -1:
+                    side = -side
+                    dir = -dir
                 side = 0
 
         #create the twist object
@@ -216,7 +220,7 @@ class Twist:
         '''
         #search for the mc4d code
         for i in range(len(Twist.mc4d_order_twist_parameters)):
-            if (Twist.mc4d_order_twist_parameters[i][0] == self.axis and np.all(Twist.mc4d_order_twist_parameters[i][1] == self.dir.vec) and (Twist.mc4d_order_twist_parameters[i][2] == self.side or self.side == 0)):
+            if (Twist.mc4d_order_twist_parameters[i][0] == self.axis and np.all(Twist.mc4d_order_twist_parameters[i][1] == self.dir.vec) and (Twist.mc4d_order_twist_parameters[i][2] == np.sign(self.side + 0.5))):
                 mc4d_code = i
                 break
 
