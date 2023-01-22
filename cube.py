@@ -14,6 +14,13 @@ class Cube:
     def __init__(self) -> None:
         self.log = Log()
         self.state = Stickercube()
+    
+    def copy(self):
+        new = Cube()
+        new.log = self.log.copy()
+        new.state = self.state.copy()
+
+        return new
 
     def twist(self, twist: Twist):
         '''
@@ -41,6 +48,10 @@ class Cube:
         '''
         new_cube = cls.__new__(cls)
         new_cube.log = Log.open()
+
+        if new_cube.log is None:
+            return None
+
         new_cube.state = Stickercube()
 
         for twist in new_cube.log.scramble:
@@ -50,18 +61,66 @@ class Cube:
         
         return new_cube
     
-    def solve(self, terminate_time: float or None = None):
+    def solve(self, search_depth = None):
         '''
         Solves the cube
 
-        terminate_time: if the time since the last solution is greater than this then the solution is returned
+        search_depth: maximum solution length desired
         '''
         #set scrambling to false
         self.log.scrambling = False
 
-        solution = solver.solve(self.state, terminate_time)
+        
+        try:
+            #for every solution
+            for solution in solver.solve(self.state, search_depth):
+                print("Found solution length:", len(solution))
+                
+                newcube = self.copy()
 
-        for move_string in " ".join(defs.TWIST_MC4D_NAMES[move] for move in solution).split():
-            self.twist(Twist.from_mc4d_string(move_string))
+                #apply the moves
+                for move_string in " ".join(defs.TWIST_MC4D_NAMES[move] for move in solution).split():
+                    newcube.twist(Twist.from_mc4d_string(move_string))
+                
+                #save the log file
+                newcube.log.save()
+        except KeyboardInterrupt:
+            return
+        
+        print("Optimal solution length:", len(solution))
+        
 
-    
+
+
+    def optimal_solve(self):
+        '''
+        Solves the cube optimally via iterative deepening A*
+        '''
+
+        #set scrambling to false
+        self.log.scrambling = False
+
+        try:
+            depth = 0
+            while True:
+                #find solution
+                for solution in solver.solve(self.state, depth):
+                    print("Found optimal solution of length:", len(solution))
+                    
+                    newcube = self.copy()
+
+                    #apply the moves
+                    for move_string in " ".join(defs.TWIST_MC4D_NAMES[move] for move in solution).split():
+                        newcube.twist(Twist.from_mc4d_string(move_string))
+                    
+                    #save the log file
+                    newcube.log.save()
+
+                    #optimal solution was found so return
+                    return
+                
+                depth += 1
+                print("Lower bound:", depth)
+
+        except KeyboardInterrupt:
+            return

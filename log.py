@@ -26,6 +26,11 @@ class Log:
         #scrambling set to false by default
         self.scrambling = scrambling
     
+    def copy(self):
+        new = Log(self.scramble.copy(), self.solution.copy(), self.scrambling)
+        new.filepath = self.filepath
+        return new
+    
     def append_twist(self, twist: Twist):
         '''
         Appends the scramble twist to the log
@@ -80,9 +85,11 @@ class Log:
             print("Cannot save log file, invalid filepath.")
             return
     
-    def save_as(self):
+    def set_filepath(self):
         '''
-        Save the log to a new file
+        Sets the filepath that the log will be saved to.
+
+        Returns true or false depending on success
         '''
 
         #create a gui
@@ -91,6 +98,17 @@ class Log:
 
         #get the file path
         self.filepath = filedialog.asksaveasfilename(defaultextension=".log", filetypes=[("Log files", "*.log")])
+
+        if self.filepath: return True
+        else: return False
+
+    def save_as(self):
+        '''
+        Save the log to a new file
+        '''
+
+        #set the filepath
+        self.set_filepath()
 
         #save the file
         self.save()
@@ -156,7 +174,6 @@ class Log:
         root = tk.Tk()
         root.withdraw()
 
-        #get the file
         file_path = filedialog.askopenfilename(filetypes=[("Log files", "*.log")])
         
         return cls.from_file(file_path)

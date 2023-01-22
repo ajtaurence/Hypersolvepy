@@ -39,39 +39,34 @@ def sequence_cancellation(sequence1: list, sequence2: list) -> bool:
         return False
 
 
-def solve(cube: Stickercube or Cubiecube, terminate_time: float or None = None):
+def solve(cube: Stickercube or Cubiecube, search_depth=None):
     '''
     Solves the given cube stopping after 'terminate_time' seconds have elapsed since the last solution was found.
     This method will eventually find and verify an optimal solution.
 
     cube: the cube to solve
-    terminate_time: if the time since the last solution is greater than this then the solution is returned
+    search_depth: maximum solution length desired
     '''
     #convert the cube to a cubiecube
     if type(cube) == Stickercube:
         cube = cube.to_cubiecube()
 
-    #save the time
-    time = perf_counter()
-
-    #initialize shortest solution as a very large number
-    len_shortest_solution = 99999999999
+    #initialize shortest solution
+    if search_depth is None:
+        len_shortest_solution = 99999999
+    else: len_shortest_solution = search_depth + 1
 
     #initialize shortest
     shortest_solution = None
 
-    #create a solution generator for phase 1
-    phase1_sol_gen = phase1.solution_generator(cube.get_phase1_node())
-
     #for every phase 1 solution
-    for phase1_sol in phase1_sol_gen:
+    for phase1_sol in phase1.solution_generator(cube.get_phase1_node()):
         #get the length of the phase 1 solution
         len_phase1_sol = len(phase1_sol)
         
-        #optimal solution found
+        #stopping condition
         if len_phase1_sol >= len_shortest_solution:
-            print("Optimal solution length:", len_shortest_solution)
-            return shortest_solution
+            return
 
         #get the cubiecube for the beginning of phase 2
         phase2_cube = cube.apply_move_list_new(phase1_sol)
@@ -81,15 +76,8 @@ def solve(cube: Stickercube or Cubiecube, terminate_time: float or None = None):
             last_axis = defs.TWIST_AXES[phase1_sol[-1]]
         except IndexError: last_axis = 0
 
-        #create a solution generator for phase 2
-        phase2_sol_gen = phase2.solution_generator(phase2_cube.get_phase2_node(), last_axis)
-
         #for every phase 2 solution
-        for phase2_sol in phase2_sol_gen:
-
-            #once enough time has passed and we have a solution return the solution
-            if terminate_time is not None and perf_counter() - time > terminate_time and shortest_solution is not None:
-                return shortest_solution
+        for phase2_sol in phase2.solution_generator(phase2_cube.get_phase2_node(), last_axis):
 
             #get the length of the phase 2 solution
             len_phase2_sol = len(phase2_sol) + len_phase1_sol - int(sequence_cancellation(phase1_sol, phase2_sol))
@@ -127,9 +115,5 @@ def solve(cube: Stickercube or Cubiecube, terminate_time: float or None = None):
             #save the new length
             len_shortest_solution = len(shortest_solution)
 
-            #save the time
-            time = perf_counter()
-
-            print("Found solution length:", len_shortest_solution)
-
+            yield shortest_solution
 

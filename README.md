@@ -1,12 +1,18 @@
 # About
-Hypersolvepy is an efficient 3-phase 2^4 Rubik's cube solver made in python. It takes an MC4D log file containing a scrambled 2^4 and returns another log file containing the solution. It produces iteratively shorter solutions, the more time it is given. Solutions to random state scrambles are typically around 27 moves (STM) after only a few seconds of searching. For short scrambles (less than about 5 moves), an optimal solution can be found and verified within a reasonable amount of time.
+Hypersolvepy is an efficient 3-phase 2^4 Rubik's cube solver made in python. It takes an MC4D log file containing a scrambled 2^4 and returns another log file containing the solution. Solutions to random state scrambles are typically around 27 moves (STM) after only a few seconds of searching. For short scrambles (less than about 5 moves), an optimal solution can be found and verified within a reasonable amount of time.
 
 # Setup
 1. Install Python 3.9 (newer versions should work but v3.9 is known to work).
 1. Install the requirements from `requirements.txt` by running the command `pip install -r requirements.txt` from the Hypersolvepy folder.
-1. Download the data files from [here](https://drive.google.com/drive/folders/1oIYpc9K3mTgnPWm1wu6VghDQYvtfaavp?usp=share_link) and put them into the Hypersolvepy folder with the python files. Optionally you may generate them yourself. Upon running `main.py`, Hypersolvepy will generate any missing data files. It may take the better part of a day even on a good computer to generate all the files. Even when done generating, large pruning tables can take a while to save to disk since they must be compressed, so be patient. The table sizes for `phase1.prun` and `phase2.prun` are flexible. If they take too long to generate for your liking then you can edit the table size in `defs.py`. The variables controlling this are `PHASE1_PRUNE_DEPTH` and `PHASE2_PRUNE_DEPTH`. Decreasing them by 1 should be sufficient. Do not touch any other variables in this folder. If you change the pruning depth then you must delete the corresponding pruning table file so it may be regenerated. Otherwise you will get an error.
-1. Run the `main.py` file. It may take up to several minutes to load all the data into memory. It will prompt you to select an MC4D log file. Then it will ask for a termination time. This is the time that Hypersolvepy will continue searching for a better solution after having found one. The timer restarts upon every solution. Upon completing the search, a save dialog will appear promting you to save the MC4D log file containing the solution.
-1. Happy hypercubing!
+1. Download the data files from [here](https://drive.google.com/drive/folders/1oIYpc9K3mTgnPWm1wu6VghDQYvtfaavp?usp=share_link) and put them into the Hypersolvepy folder with the python files. Optionally you may generate them yourself. Upon running `main.py`, Hypersolvepy will generate any missing data files. It may take the better part of a day even on a good computer to generate all the files. Even when done generating, large pruning tables can take a while to save to disk since they must be compressed, so be patient. The table sizes for `phase1.prun` and `phase2.prun` are flexible. If they take too long to generate for your liking then you can edit the table size in `defs.py`. The variables controlling this are `PHASE1_PRUNE_DEPTH` and `PHASE2_PRUNE_DEPTH`. Decreasing them by 1 should be sufficient. Do not touch any other variables in this folder. If you change the pruning depth then you must delete the corresponding pruning table file so it may be regenerated.
+1. Run the `main.py` file. Happy hypercubing!
+
+# Solving Modes
+## Fast
+This mode will return reasonably short solutions very quickly. If left to run for enough time, an optimal solution will be found (if you only care about finding the optimal solution then it is faster to use optimal mode). This mode is recommended to be used almost for almost every case.
+
+## Optimal
+This mode will search for the optimal solution and stop after finding it.Lower bounds for the length of the solution are returned as they are checked. This mode is only recommended to be used when a very short solution (less than 5 moves) is known to exist or if you would like to check if such very short solutions exist. In this mode, solutions will be checked in order of increasing length. 
 
 # Details
 Hypersolvepy splits the solving process into 3 phases:

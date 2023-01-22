@@ -5,27 +5,49 @@ from gen_all_data import gen_data_if_missing
 gen_data_if_missing()
 
 while True:
-    input("\nPress Enter to select a log file...")
-
-    cube = None
-    while cube is None:
+    #get the cube from a log file
+    while True:
+        input("\nPress Enter to select a log file...")
         cube = Cube.from_log()
 
-    success = False
-    while not success:
-        input_text = input("Enter time (s) after last solution was found to terminate the search. Enter 'optimal' to return an optimal solution: ")
-        if input_text.strip() == 'optimal':
-            terminate_time = None
-            success = True
+        if cube is not None:
+            break
+
+    #set the save location for the log
+    print("Save solution file as...")
+    if not cube.log.set_filepath():
+        continue
+
+    #fast algorithm or optimal?
+    while True:
+        response = input("Mode: fast or optimal (f/o): ").rstrip().lower()
+        
+        if response == 'o':
+            optimal = True
+            break
+        elif response == 'f':
+            optimal = False
+            break
         else:
-            try:
-                terminate_time = float(input_text)
-            except ValueError:
-                print("Uknown input, please try again")
-            else:
-                success = True
+            print("unkown input")
 
-    cube.solve(terminate_time)
+    #optimal solution
+    if optimal:
+        print("Finding optimal solution... press ctrl+c to stop")
+        cube.optimal_solve()
 
-    print("Save log file as...")
-    cube.log.save_as()
+    #normal solution
+    else:
+        max_length = input("Maximum solution length (press enter to find any solution): ")
+
+        try:
+            max_length = int(max_length)
+        except ValueError:
+            max_length = None
+
+        if max_length is not None:
+            print("Finding solutions shorter than {}... press ctrl+c to stop".format(max_length+1))
+        else: 
+            print("Solving... press ctrl+c to stop")
+        
+        cube.solve(max_length)
