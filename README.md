@@ -12,7 +12,7 @@ Hypersolvepy is an efficient 3-phase 2^4 Rubik's cube solver made in python. It 
 This mode will return reasonably short solutions very quickly. If left to run for enough time, an optimal solution will be found (if you only care about finding the optimal solution then it is faster to use optimal mode). This mode is recommended to be used almost for almost every case.
 
 ## Optimal
-This mode will search for the optimal solution and stop after finding it.Lower bounds for the length of the solution are returned as they are checked. This mode is only recommended to be used when a very short solution (less than 5 moves) is known to exist or if you would like to check if such very short solutions exist. In this mode, solutions will be checked in order of increasing length. 
+This mode will search for an optimal solution and stop after finding it. Lower bounds for the length of the solution are returned as they are checked. This mode is only recommended to be used when a very short solution (less than 5 moves) is known to exist or if you would like to check if such very short solutions exist. In this mode, solutions will be checked in order of increasing length. 
 
 # Details
 Hypersolvepy splits the solving process into 3 phases:
